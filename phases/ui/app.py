@@ -54,6 +54,41 @@ SUPPORTED_FUNDS = (
     "HDFC Large Cap Fund Direct Growth",
 )
 
+# Follow-up suggestions keyed by scheme theme (shown after each answer).
+FOLLOW_UPS: dict[str, tuple[str, ...]] = {
+    "mid_cap": (
+        "What is the expense ratio for HDFC Mid Cap Fund Direct Growth?",
+        "What is the minimum SIP for HDFC Mid Cap Fund Direct Growth?",
+        "What is the benchmark for HDFC Mid Cap Fund Direct Growth?",
+    ),
+    "equity": (
+        "What are the exit load details for HDFC Equity Fund Direct Growth?",
+        "What is the expense ratio for HDFC Equity Fund Direct Growth?",
+        "What is the minimum SIP for HDFC Equity Fund Direct Growth?",
+    ),
+    "focused": (
+        "What is the expense ratio for HDFC Focused Fund Direct Growth?",
+        "What is the latest NAV for HDFC Focused Fund Direct Growth?",
+        "What is the minimum SIP for HDFC Focused Fund Direct Growth?",
+    ),
+    "elss": (
+        "What is the lock-in period for HDFC ELSS Tax Saver Direct Plan Growth?",
+        "What is the expense ratio for HDFC ELSS Tax Saver Direct Plan Growth?",
+        "What is the minimum SIP for HDFC ELSS Tax Saver Direct Plan Growth?",
+    ),
+    "large_cap": (
+        "What is the latest NAV for HDFC Large Cap Fund Direct Growth?",
+        "What is the expense ratio for HDFC Large Cap Fund Direct Growth?",
+        "What is the minimum SIP for HDFC Large Cap Fund Direct Growth?",
+    ),
+}
+
+GENERIC_FOLLOW_UPS = (
+    "What is the latest NAV for HDFC Mid Cap Fund Direct Growth?",
+    "What are the exit load details for HDFC Equity Fund Direct Growth?",
+    "What is the minimum SIP for HDFC ELSS Tax Saver Direct Plan Growth?",
+)
+
 
 def _inject_styles() -> None:
     st.markdown(
@@ -137,6 +172,79 @@ def _active_messages() -> list[dict]:
     return st.session_state.chats[cid]["messages"]
 
 
+def _asked_questions(messages: list[dict]) -> set[str]:
+    return {
+        m["content"].strip().lower()
+        for m in messages
+        if m.get("role") == "user" and m.get("content")
+    }
+
+
+def _detect_scheme_theme(text: str) -> str | None:
+    t = text.lower()
+    if "elss" in t or "tax saver" in t:
+        return "elss"
+    if "mid cap" in t or "mid-cap" in t:
+        return "mid_cap"
+    if "large cap" in t or "large-cap" in t:
+        return "large_cap"
+    if "focused" in t:
+        return "focused"
+    if "equity fund" in t or "hdfc equity" in t:
+        return "equity"
+    return None
+
+
+def _follow_up_suggestions(messages: list[dict]) -> list[str]:
+    """Return up to 3 follow-up questions not already asked in this chat."""
+    asked = _asked_questions(messages)
+    context = ""
+    for m in reversed(messages):
+        if m.get("role") == "user" and m.get("content"):
+            context = m["content"]
+            break
+        if m.get("role") == "assistant" and m.get("result") is not None:
+            context = m["result"].answer
+            break
+
+    theme = _detect_scheme_theme(context)
+    pool: tuple[str, ...] = FOLLOW_UPS.get(theme, ()) + GENERIC_FOLLOW_UPS
+
+    out: list[str] = []
+    for q in pool:
+        if q.strip().lower() not in asked and q not in out:
+            out.append(q)
+        if len(out) >= 3:
+            break
+    return out
+
+
+def _clear_active_chat() -> None:
+    cid = st.session_state.active_chat_id
+    st.session_state.chats[cid]["messages"] = []
+
+
+def _clear_all_chats() -> None:
+    cid = str(uuid.uuid4())
+    st.session_state.chats = {cid: {"title": "Chat 1", "messages": []}}
+    st.session_state.active_chat_id = cid
+
+
+def _render_follow_ups(messages: list[dict]) -> None:
+    suggestions = _follow_up_suggestions(messages)
+    if not suggestions:
+        return
+    st.markdown("**Suggested follow-ups**")
+    col_a, col_b = st.columns(2, gap="small")
+    for i, question in enumerate(suggestions):
+        col = col_a if i % 2 == 0 else col_b
+        label = question if len(question) <= 58 else question[:55] + "…"
+        if col.button(label, key=f"follow_{i}", use_container_width=True, help=question):
+            with st.spinner("Retrieving facts…"):
+                _ask(question)
+            st.rerun()
+
+
 def _render_message(result: AnswerResult) -> None:
     with st.chat_message("assistant"):
         st.markdown(result.answer)
@@ -196,6 +304,15 @@ def main() -> None:
             st.session_state.chats[cid] = {"title": f"Chat {n}", "messages": []}
             st.session_state.active_chat_id = cid
             st.rerun()
+        btn_col1, btn_col2 = st.columns(2, gap="small")
+        with btn_col1:
+            if st.button("Clear chat", use_container_width=True):
+                _clear_active_chat()
+                st.rerun()
+        with btn_col2:
+            if st.button("Clear all", use_container_width=True):
+                _clear_all_chats()
+                st.rerun()
         st.markdown("**Supported funds**")
         for fund in SUPPORTED_FUNDS:
             st.markdown(f"- {fund}")
@@ -228,6 +345,9 @@ def main() -> None:
                 st.error(entry["error"])
         else:
             _render_message(entry["result"])
+
+    if has_chat:
+        _render_follow_ups(messages)
 
     if prompt := st.chat_input("Ask a factual question about HDFC schemes…"):
         with st.spinner("Retrieving facts…"):
