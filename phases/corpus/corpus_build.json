@@ -1,0 +1,186 @@
+{
+  "ok": true,
+  "corpus_root": "/Users/mahimatiwari/Desktop/ms_02/phases/corpus",
+  "phases_root": "/Users/mahimatiwari/Desktop/ms_02/phases",
+  "paths": {
+    "raw_root": "/Users/mahimatiwari/Desktop/ms_02/phases/corpus/raw",
+    "intermediate_root": "/Users/mahimatiwari/Desktop/ms_02/phases/corpus/intermediate",
+    "normalized_root": "/Users/mahimatiwari/Desktop/ms_02/phases/corpus/normalized"
+  },
+  "steps": [
+    {
+      "step": "0_validate_allowlist_sh",
+      "ok": true,
+      "detail": {
+        "message": "allowlist OK (5 URLs)"
+      }
+    },
+    {
+      "step": "1.1_registry",
+      "ok": true,
+      "detail": {
+        "allowlist_path": "/Users/mahimatiwari/Desktop/ms_02/phases/foundations/allowlist.yaml",
+        "schemes": 5,
+        "expected_schemes": 5
+      }
+    },
+    {
+      "step": "1.2_fetch",
+      "ok": true,
+      "detail": {
+        "results": [
+          {
+            "scheme_id": "hdfc_mid_cap_direct_growth",
+            "ok": true,
+            "error": null,
+            "http_status": 200
+          },
+          {
+            "scheme_id": "hdfc_equity_direct_growth",
+            "ok": true,
+            "error": null,
+            "http_status": 200
+          },
+          {
+            "scheme_id": "hdfc_focused_direct_growth",
+            "ok": true,
+            "error": null,
+            "http_status": 200
+          },
+          {
+            "scheme_id": "hdfc_elss_tax_saver_direct_growth",
+            "ok": true,
+            "error": null,
+            "http_status": 200
+          },
+          {
+            "scheme_id": "hdfc_large_cap_direct_growth",
+            "ok": true,
+            "error": null,
+            "http_status": 200
+          }
+        ]
+      }
+    },
+    {
+      "step": "1.3_extract",
+      "ok": true,
+      "detail": {
+        "results": [
+          {
+            "scheme_id": "hdfc_mid_cap_direct_growth",
+            "ok": true,
+            "error": null
+          },
+          {
+            "scheme_id": "hdfc_equity_direct_growth",
+            "ok": true,
+            "error": null
+          },
+          {
+            "scheme_id": "hdfc_focused_direct_growth",
+            "ok": true,
+            "error": null
+          },
+          {
+            "scheme_id": "hdfc_elss_tax_saver_direct_growth",
+            "ok": true,
+            "error": null
+          },
+          {
+            "scheme_id": "hdfc_large_cap_direct_growth",
+            "ok": true,
+            "error": null
+          }
+        ]
+      }
+    },
+    {
+      "step": "1.4_normalize",
+      "ok": true,
+      "detail": {
+        "results": [
+          {
+            "scheme_id": "hdfc_mid_cap_direct_growth",
+            "ok": true,
+            "error": null,
+            "normalized_sha256": "ba9f7bd53a3d070132a988e8596ede9da4d468f8b8a6997ee974e5b34dd90904"
+          },
+          {
+            "scheme_id": "hdfc_equity_direct_growth",
+            "ok": true,
+            "error": null,
+            "normalized_sha256": "b1cfbb32f91fbecc2067cf6c99bdd4e5a393514640a6435042fbe413b4619a60"
+          },
+          {
+            "scheme_id": "hdfc_focused_direct_growth",
+            "ok": true,
+            "error": null,
+            "normalized_sha256": "9b8b761fe6128c33930263f3c8b76202cc009ff5eac01604fdfa4f535b1c21ca"
+          },
+          {
+            "scheme_id": "hdfc_elss_tax_saver_direct_growth",
+            "ok": true,
+            "error": null,
+            "normalized_sha256": "ebf3aed601aa7cccda318a7fc9637d702417600923e664abf164f04b4de0d4cd"
+          },
+          {
+            "scheme_id": "hdfc_large_cap_direct_growth",
+            "ok": true,
+            "error": null,
+            "normalized_sha256": "f559b73731d1d887932139628b2bf391b872593989dd0404fb25a09c0f8b52b0"
+          }
+        ]
+      }
+    },
+    {
+      "step": "1.5_postflight",
+      "ok": true,
+      "detail": {
+        "schemes": [
+          {
+            "scheme_id": "hdfc_mid_cap_direct_growth",
+            "page_md": "/Users/mahimatiwari/Desktop/ms_02/phases/corpus/normalized/hdfc_mid_cap_direct_growth/page.md",
+            "ok": true,
+            "error": null,
+            "normalized_sha256": "ba9f7bd53a3d070132a988e8596ede9da4d468f8b8a6997ee974e5b34dd90904",
+            "raw_fetched_at": "2026-05-17T08:43:04Z"
+          },
+          {
+            "scheme_id": "hdfc_equity_direct_growth",
+            "page_md": "/Users/mahimatiwari/Desktop/ms_02/phases/corpus/normalized/hdfc_equity_direct_growth/page.md",
+            "ok": true,
+            "error": null,
+            "normalized_sha256": "b1cfbb32f91fbecc2067cf6c99bdd4e5a393514640a6435042fbe413b4619a60",
+            "raw_fetched_at": "2026-05-17T08:43:04Z"
+          },
+          {
+            "scheme_id": "hdfc_focused_direct_growth",
+            "page_md": "/Users/mahimatiwari/Desktop/ms_02/phases/corpus/normalized/hdfc_focused_direct_growth/page.md",
+            "ok": true,
+            "error": null,
+            "normalized_sha256": "9b8b761fe6128c33930263f3c8b76202cc009ff5eac01604fdfa4f535b1c21ca",
+            "raw_fetched_at": "2026-05-17T08:43:05Z"
+          },
+          {
+            "scheme_id": "hdfc_elss_tax_saver_direct_growth",
+            "page_md": "/Users/mahimatiwari/Desktop/ms_02/phases/corpus/normalized/hdfc_elss_tax_saver_direct_growth/page.md",
+            "ok": true,
+            "error": null,
+            "normalized_sha256": "ebf3aed601aa7cccda318a7fc9637d702417600923e664abf164f04b4de0d4cd",
+            "raw_fetched_at": "2026-05-17T08:43:07Z"
+          },
+          {
+            "scheme_id": "hdfc_large_cap_direct_growth",
+            "page_md": "/Users/mahimatiwari/Desktop/ms_02/phases/corpus/normalized/hdfc_large_cap_direct_growth/page.md",
+            "ok": true,
+            "error": null,
+            "normalized_sha256": "f559b73731d1d887932139628b2bf391b872593989dd0404fb25a09c0f8b52b0",
+            "raw_fetched_at": "2026-05-17T08:43:08Z"
+          }
+        ],
+        "scheme_count": 5
+      }
+    }
+  ]
+}

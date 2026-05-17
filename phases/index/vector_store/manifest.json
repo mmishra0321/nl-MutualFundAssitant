@@ -1,0 +1,50 @@
+{
+  "ok": true,
+  "backend": "chromadb",
+  "collection_name": "ms02_chunks",
+  "persist_path": "/Users/mahimatiwari/Desktop/ms_02/phases/index/vector_store/chroma",
+  "embeddings_root": "/Users/mahimatiwari/Desktop/ms_02/phases/index/embeddings",
+  "allowlist_path": "/Users/mahimatiwari/Desktop/ms_02/phases/foundations/allowlist.yaml",
+  "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_dimensions": 384,
+  "chunks_corpus_fingerprint": "9a5aed7c1e1ac38d108a16de15ba579d3a866ead654b020382e335faa920bcea",
+  "total_vectors": 98,
+  "total_rejected": 0,
+  "schemes": [
+    {
+      "scheme_id": "hdfc_elss_tax_saver_direct_growth",
+      "vector_count": 18
+    },
+    {
+      "scheme_id": "hdfc_equity_direct_growth",
+      "vector_count": 20
+    },
+    {
+      "scheme_id": "hdfc_focused_direct_growth",
+      "vector_count": 20
+    },
+    {
+      "scheme_id": "hdfc_large_cap_direct_growth",
+      "vector_count": 20
+    },
+    {
+      "scheme_id": "hdfc_mid_cap_direct_growth",
+      "vector_count": 20
+    }
+  ],
+  "probe": {
+    "count": 98,
+    "sample_ids": [
+      "hdfc_large_cap_direct_growth_0005",
+      "hdfc_focused_direct_growth_0005",
+      "hdfc_large_cap_direct_growth_0017"
+    ],
+    "sample_scheme_ids": [
+      "hdfc_large_cap_direct_growth",
+      "hdfc_focused_direct_growth",
+      "hdfc_large_cap_direct_growth"
+    ]
+  },
+  "loaded_at": "2026-05-17T08:43:21Z",
+  "error": null
+}

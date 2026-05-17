@@ -1,0 +1,14 @@
+{
+  "scheme_id": "hdfc_large_cap_direct_growth",
+  "scheme_name": "HDFC Large Cap Fund Direct Growth",
+  "source_url": "https://groww.in/mutual-funds/hdfc-large-cap-fund-direct-growth",
+  "chunk_count": 23,
+  "chunks_file": "hdfc_large_cap_direct_growth.jsonl",
+  "chunked_at": "2026-05-17T08:43:09Z",
+  "raw_fetched_at": "2026-05-17T08:43:08Z",
+  "raw_content_sha256": "896b94e86ce8c8ea0dc485df56862693afd13be76536ea89ed51cd16d673fa07",
+  "normalized_sha256": "f559b73731d1d887932139628b2bf391b872593989dd0404fb25a09c0f8b52b0",
+  "normalized_at": "2026-05-17T08:43:09Z",
+  "ok": true,
+  "error": null
+}

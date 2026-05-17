@@ -1,0 +1,6 @@
+# Phase 5 — install with Phase 1–3 on PYTHONPATH
+PyYAML>=6.0,<7
+requests>=2.31.0,<3
+-r ../corpus/requirements.txt
+-r ../index/requirements.txt
+-r ../answer_engine/requirements.txt

@@ -1,0 +1,78 @@
+{
+  "ok": true,
+  "normalized_root": "/Users/mahimatiwari/Desktop/ms_02/phases/corpus/normalized",
+  "chunks_root": "/Users/mahimatiwari/Desktop/ms_02/phases/index/chunks",
+  "schemes": [
+    {
+      "scheme_id": "hdfc_mid_cap_direct_growth",
+      "scheme_name": "HDFC Mid Cap Fund Direct Growth",
+      "source_url": "https://groww.in/mutual-funds/hdfc-mid-cap-fund-direct-growth",
+      "chunk_count": 25,
+      "chunks_file": "hdfc_mid_cap_direct_growth.jsonl",
+      "chunked_at": "2026-05-15T14:13:43Z",
+      "raw_fetched_at": "2026-05-15T03:00:03Z",
+      "raw_content_sha256": "062850cce6d80d71bccae40fc553fdab9c6b12639247aa0f5fa0fe9045fef7c6",
+      "normalized_sha256": "44d9fc7093703e30243d603b0e6fc5247c6568c1a9fe1d6c7c4e8364242fe515",
+      "normalized_at": "2026-05-15T03:00:07Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "scheme_id": "hdfc_equity_direct_growth",
+      "scheme_name": "HDFC Equity Fund Direct Growth",
+      "source_url": "https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth",
+      "chunk_count": 25,
+      "chunks_file": "hdfc_equity_direct_growth.jsonl",
+      "chunked_at": "2026-05-15T14:13:43Z",
+      "raw_fetched_at": "2026-05-15T03:00:04Z",
+      "raw_content_sha256": "fc21d466c7f97c4843707991e3a330555dea324d949f8fb1eca0259c14d43d94",
+      "normalized_sha256": "4662b0290e862d8e80bd53048a79b6b96fc331ae81775beb6fb6968bd8c0cff9",
+      "normalized_at": "2026-05-15T03:00:07Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "scheme_id": "hdfc_focused_direct_growth",
+      "scheme_name": "HDFC Focused Fund Direct Growth",
+      "source_url": "https://groww.in/mutual-funds/hdfc-focused-fund-direct-growth",
+      "chunk_count": 23,
+      "chunks_file": "hdfc_focused_direct_growth.jsonl",
+      "chunked_at": "2026-05-15T14:13:43Z",
+      "raw_fetched_at": "2026-05-15T03:00:05Z",
+      "raw_content_sha256": "eb9b24a4ae1551da53e097a0885efee7db28a3b57236371e1dd7e3fbb9ea8494",
+      "normalized_sha256": "f46799e0ffc42942fadf08ab43c1e1a775f5ef3e3d342117a1deda8f60e85e1c",
+      "normalized_at": "2026-05-15T03:00:08Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "scheme_id": "hdfc_elss_tax_saver_direct_growth",
+      "scheme_name": "HDFC ELSS Tax Saver Fund Direct Plan Growth",
+      "source_url": "https://groww.in/mutual-funds/hdfc-elss-tax-saver-fund-direct-plan-growth",
+      "chunk_count": 23,
+      "chunks_file": "hdfc_elss_tax_saver_direct_growth.jsonl",
+      "chunked_at": "2026-05-15T14:13:43Z",
+      "raw_fetched_at": "2026-05-15T03:00:06Z",
+      "raw_content_sha256": "0a364ab43044653ea43ea1c373739711330698c825e676826f53a5277cce801d",
+      "normalized_sha256": "109e1f075b59f13af41b498448640de626cc96e44b71b539930d54a8b75d5d0d",
+      "normalized_at": "2026-05-15T03:00:08Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "scheme_id": "hdfc_large_cap_direct_growth",
+      "scheme_name": "HDFC Large Cap Fund Direct Growth",
+      "source_url": "https://groww.in/mutual-funds/hdfc-large-cap-fund-direct-growth",
+      "chunk_count": 23,
+      "chunks_file": "hdfc_large_cap_direct_growth.jsonl",
+      "chunked_at": "2026-05-15T14:13:43Z",
+      "raw_fetched_at": "2026-05-15T03:00:07Z",
+      "raw_content_sha256": "36e88c4f29fc0d5f971292119d41332885726ca1254379f89817ccb70af7e9a6",
+      "normalized_sha256": "228112ffda4b50ce06ba8685793f4cf403b8465c197fc33005523af595262fe4",
+      "normalized_at": "2026-05-15T03:00:08Z",
+      "ok": true,
+      "error": null
+    }
+  ],
+  "total_chunks": 119
+}

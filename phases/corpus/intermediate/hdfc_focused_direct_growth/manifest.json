@@ -1,0 +1,12 @@
+{
+  "scheme_id": "hdfc_focused_direct_growth",
+  "scheme_name": "HDFC Focused Fund Direct Growth",
+  "source_url": "https://groww.in/mutual-funds/hdfc-focused-fund-direct-growth",
+  "raw_content_sha256": "105950521786e0f509a4a33cf2d1c1e0a9ae8ca6d00829d531f4ecf22589ce64",
+  "raw_fetched_at": "2026-05-17T08:43:05Z",
+  "extracted_at": "2026-05-17T08:43:08Z",
+  "ok": true,
+  "error": null,
+  "extracted_sha256": "2f90d35e430a62e47dc15f62500c7e91b93386e79c991b08d58df1007b486c05",
+  "extracted_size_bytes": 171349
+}

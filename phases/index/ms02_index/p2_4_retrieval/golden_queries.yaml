@@ -1,0 +1,37 @@
+# Golden retrieval queries — Phase 2.4 exit criteria
+version: 1
+queries:
+  - id: elss_min_sip
+    query: "What is the minimum SIP for HDFC ELSS Tax Saver?"
+    expected_scheme_id: hdfc_elss_tax_saver_direct_growth
+    must_match_any: ["sip", "₹", "100"]
+
+  - id: elss_lock_in
+    query: "lock-in period for HDFC ELSS"
+    expected_scheme_id: hdfc_elss_tax_saver_direct_growth
+    must_match_any: ["elss", "tax saver", "year", "3 year"]
+
+  - id: mid_cap_expense
+    query: "expense ratio of HDFC Mid Cap Fund Direct Growth"
+    expected_scheme_id: hdfc_mid_cap_direct_growth
+    must_match_any: ["expense", "ratio", "%"]
+
+  - id: mid_cap_exit_load
+    query: "exit load HDFC Mid Cap"
+    expected_scheme_id: hdfc_mid_cap_direct_growth
+    must_match_any: ["exit", "load", "%"]
+
+  - id: large_cap_benchmark
+    query: "benchmark for HDFC Large Cap Fund"
+    expected_scheme_id: hdfc_large_cap_direct_growth
+    must_match_any: ["benchmark", "nifty", "bse", "index"]
+
+  - id: focused_min_sip
+    query: "minimum SIP HDFC Focused Fund"
+    expected_scheme_id: hdfc_focused_direct_growth
+    must_match_any: ["sip", "₹", "min"]
+
+  - id: equity_expense
+    query: "HDFC Equity Fund Direct Growth expense ratio"
+    expected_scheme_id: hdfc_equity_direct_growth
+    must_match_any: ["expense", "ratio", "%"]

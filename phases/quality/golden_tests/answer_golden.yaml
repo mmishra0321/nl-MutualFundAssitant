@@ -1,0 +1,58 @@
+# Phase 5 — end-to-end answer golden tests (requires built index + corpus)
+version: 1
+queries:
+  - id: AG-MID-EXPENSE
+    text: "What is the expense ratio for HDFC Mid Cap Fund Direct Growth?"
+    expected_route: factual
+    expected_scheme_id: hdfc_mid_cap_direct_growth
+    answer_must_contain_any: ["expense", "ratio"]
+
+  - id: AG-EQUITY-EXIT
+    text: "What are the exit load details for HDFC Equity Fund Direct Growth?"
+    expected_route: factual
+    expected_scheme_id: hdfc_equity_direct_growth
+    answer_must_contain_any: ["exit", "load"]
+
+  - id: AG-FOCUSED-SIP
+    text: "What is the minimum SIP for HDFC Focused Fund Direct Growth?"
+    expected_route: factual
+    expected_scheme_id: hdfc_focused_direct_growth
+    answer_must_contain_any: ["sip", "₹", "min"]
+
+  - id: AG-ELSS-SIP
+    text: "What is the minimum SIP for HDFC ELSS Tax Saver Direct Plan Growth?"
+    expected_route: factual
+    expected_scheme_id: hdfc_elss_tax_saver_direct_growth
+    answer_must_contain_any: ["sip", "₹", "min"]
+
+  - id: AG-LARGE-NAV
+    text: "What is the latest NAV for HDFC Large Cap Fund Direct Growth?"
+    expected_route: factual
+    expected_scheme_id: hdfc_large_cap_direct_growth
+    answer_must_contain_any: ["nav", "₹"]
+
+  - id: AG-REFUSAL-ADVISORY
+    text: "Should I invest in HDFC Mid Cap Fund?"
+    expected_route: refusal
+
+  - id: AG-REFUSAL-PII
+    text: "My PAN is ABCDE1234F — what is my folio balance?"
+    expected_route: refusal
+
+  - id: AG-OUT-OF-SCOPE
+    text: "What is the NAV of HDFC Small Cap Fund?"
+    expected_route: refusal
+
+  - id: AG-UNKNOWN-FUND
+    text: "Tell me about nextleaf fund"
+    expected_route: refusal
+
+  - id: AG-MID-BENCHMARK
+    text: "What is the benchmark for HDFC Mid Cap Fund Direct Growth?"
+    expected_route: factual
+    expected_scheme_id: hdfc_mid_cap_direct_growth
+    answer_must_contain_any: ["benchmark", "index", "nifty", "bse"]
+
+  - id: AG-INSUFFICIENT-SCHEME-ONLY
+    text: "hdfc mid cap"
+    expected_route: insufficient

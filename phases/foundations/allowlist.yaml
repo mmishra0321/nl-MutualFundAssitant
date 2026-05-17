@@ -1,0 +1,34 @@
+# Mutual Fund FAQ Assistant — corpus & citation allowlist (Phase 0)
+# Rule: exactly these five URLs. No additions without architecture / compliance review.
+
+version: 1
+amc: HDFC
+description: >
+  Closed allowlist for this build. Fetchers must GET only these pages;
+  citations in factual answers must be exactly one URL from this list.
+
+urls:
+  - id: hdfc_mid_cap_direct_growth
+    scheme_name: HDFC Mid Cap Fund Direct Growth
+    slug: hdfc-mid-cap-fund-direct-growth
+    url: https://groww.in/mutual-funds/hdfc-mid-cap-fund-direct-growth
+
+  - id: hdfc_equity_direct_growth
+    scheme_name: HDFC Equity Fund Direct Growth
+    slug: hdfc-equity-fund-direct-growth
+    url: https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth
+
+  - id: hdfc_focused_direct_growth
+    scheme_name: HDFC Focused Fund Direct Growth
+    slug: hdfc-focused-fund-direct-growth
+    url: https://groww.in/mutual-funds/hdfc-focused-fund-direct-growth
+
+  - id: hdfc_elss_tax_saver_direct_growth
+    scheme_name: HDFC ELSS Tax Saver Fund Direct Plan Growth
+    slug: hdfc-elss-tax-saver-fund-direct-plan-growth
+    url: https://groww.in/mutual-funds/hdfc-elss-tax-saver-fund-direct-plan-growth
+
+  - id: hdfc_large_cap_direct_growth
+    scheme_name: HDFC Large Cap Fund Direct Growth
+    slug: hdfc-large-cap-fund-direct-growth
+    url: https://groww.in/mutual-funds/hdfc-large-cap-fund-direct-growth

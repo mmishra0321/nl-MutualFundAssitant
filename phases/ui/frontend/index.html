@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>groww-factor — HDFC facts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Inline fallback so layout stays dark even if external CSS is blocked -->
+    <style>
+      html, body { margin: 0; height: 100%; background: #050608; color: #f4f6f8; font-family: Inter, system-ui, sans-serif; }
+      .app-shell { display: flex; min-height: 100vh; min-height: 100dvh; }
+      .sidebar { width: 280px; background: #0a0c0f; border-right: 1px solid rgba(255,255,255,.08); padding: 1.25rem 1rem; display: flex; flex-direction: column; gap: 1rem; }
+      .chat-panel { flex: 1; display: flex; flex-direction: column; background: #06080b; min-width: 0; }
+      .btn-new-chat { background: #5eecc8; color: #041210; border: none; border-radius: 10px; padding: .7rem 1rem; font-weight: 600; cursor: pointer; width: 100%; }
+      .sidebar-label { font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; color: #6b7280; margin: 0 0 .5rem; }
+      .brand-title { margin: 0; font-size: 1.1rem; }
+      .brand-tagline { margin: .35rem 0 0; font-size: .72rem; color: #9ca3af; }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css?v=6" />
+  </head>
+  <body>
+    <a class="skip-link" href="#chat-main">Skip to chat</a>
+
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navigation">
+        <div class="sidebar-brand">
+          <img src="/static/logo.png?v=5" alt="" class="brand-logo" width="40" height="40" />
+          <div>
+            <h1 class="brand-title">groww-factor</h1>
+            <p class="brand-tagline">Factual intelligence for HDFC Mutual Fund analysis.</p>
+          </div>
+        </div>
+
+        <div class="sidebar-actions">
+          <button type="button" id="new-chat-btn" class="btn-new-chat">+ New Chat</button>
+          <button type="button" id="clear-chats-btn" class="btn-clear-chats" title="Remove all chats and start fresh">
+            Clear all chats
+          </button>
+        </div>
+
+        <div class="sidebar-section sidebar-history">
+          <h2 class="sidebar-label">History</h2>
+          <ul class="history-list" id="history-list" aria-label="Chat history"></ul>
+        </div>
+
+        <div class="sidebar-section sidebar-funds">
+          <h2 class="sidebar-label">Supported funds</h2>
+          <ul class="funds-list">
+            <li>HDFC Mid Cap Fund Direct Growth</li>
+            <li>HDFC Equity Fund Direct Growth</li>
+            <li>HDFC Focused Fund Direct Growth</li>
+            <li>HDFC ELSS Tax Saver Direct Plan Growth</li>
+            <li>HDFC Large Cap Fund Direct Growth</li>
+          </ul>
+        </div>
+
+        <p class="sidebar-disclaimer" role="note">Facts-only. No investment advice.</p>
+      </aside>
+
+      <main id="chat-main" class="chat-panel">
+        <header class="chat-header">
+          <h2 class="chat-title" id="chat-title">Chat 1</h2>
+          <span class="badge-verified">
+            <span class="badge-dot" aria-hidden="true"></span>
+            Facts verified
+          </span>
+        </header>
+
+        <div class="chat-body" id="chat-body">
+          <div id="welcome-screen" class="welcome-screen">
+            <img src="/static/logo.png?v=5" alt="" class="welcome-logo" width="72" height="72" />
+            <h3 class="welcome-heading">How can I help you today?</h3>
+            <p class="welcome-sub">
+              I provide strict, compliance-verified data sourced directly from official fund documents.
+            </p>
+
+            <div class="suggestion-grid" role="group" aria-label="Suggested questions">
+              <button
+                type="button"
+                class="suggestion-card"
+                data-question="What is the latest NAV for HDFC Mid Cap Fund Direct Growth?"
+              >
+                <span class="suggestion-icon" aria-hidden="true">💬</span>
+                <span>What is the latest NAV for HDFC Mid Cap Fund Direct Growth?</span>
+              </button>
+              <button
+                type="button"
+                class="suggestion-card"
+                data-question="What is the expense ratio for HDFC Mid Cap Fund Direct Growth?"
+              >
+                <span class="suggestion-icon" aria-hidden="true">💬</span>
+                <span>What is the expense ratio for HDFC Mid Cap Fund Direct Growth?</span>
+              </button>
+              <button
+                type="button"
+                class="suggestion-card"
+                data-question="What are the exit load details for HDFC Equity Fund Direct Growth?"
+              >
+                <span class="suggestion-icon" aria-hidden="true">💬</span>
+                <span>What are the exit load details for HDFC Equity Fund Direct Growth?</span>
+              </button>
+              <button
+                type="button"
+                class="suggestion-card"
+                data-question="What is the minimum SIP for HDFC ELSS Tax Saver Direct Plan Growth?"
+              >
+                <span class="suggestion-icon" aria-hidden="true">💬</span>
+                <span>What is the minimum SIP for HDFC ELSS Tax Saver Direct Plan Growth?</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="messages" class="messages" hidden aria-live="polite"></div>
+        </div>
+
+        <footer class="chat-footer">
+          <form id="ask-form" class="input-bar" autocomplete="off">
+            <label for="question-input" class="visually-hidden">Ask a question</label>
+            <input
+              type="text"
+              id="question-input"
+              name="question"
+              maxlength="2000"
+              placeholder="Ask a factual question about HDFC schemes…"
+              autocomplete="off"
+            />
+            <button type="submit" id="submit-btn" class="btn-send" aria-label="Send">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M5 12h12m0 0l-5-5m5 5l-5 5"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </form>
+          <p id="status" class="status-line" aria-live="polite"></p>
+        </footer>
+      </main>
+    </div>
+
+    <script src="/static/app.js?v=6" defer></script>
+  </body>
+</html>

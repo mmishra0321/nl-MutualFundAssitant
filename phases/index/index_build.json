@@ -1,0 +1,135 @@
+{
+  "ok": true,
+  "phases_root": "/Users/mahimatiwari/Desktop/ms_02/phases",
+  "index_root": "/Users/mahimatiwari/Desktop/ms_02/phases/index",
+  "paths": {
+    "normalized_root": "/Users/mahimatiwari/Desktop/ms_02/phases/corpus/normalized",
+    "chunks_root": "/Users/mahimatiwari/Desktop/ms_02/phases/index/chunks",
+    "embeddings_root": "/Users/mahimatiwari/Desktop/ms_02/phases/index/embeddings",
+    "vector_store_root": "/Users/mahimatiwari/Desktop/ms_02/phases/index/vector_store"
+  },
+  "steps": [
+    {
+      "step": "0_validate_allowlist_sh",
+      "ok": true,
+      "detail": {
+        "message": "allowlist OK (5 URLs)"
+      }
+    },
+    {
+      "step": "2.0_registry",
+      "ok": true,
+      "detail": {
+        "allowlist_path": "/Users/mahimatiwari/Desktop/ms_02/phases/foundations/allowlist.yaml",
+        "schemes": 5,
+        "expected_schemes": 5
+      }
+    },
+    {
+      "step": "2.0_preflight",
+      "ok": true,
+      "detail": {
+        "normalized_root": "/Users/mahimatiwari/Desktop/ms_02/phases/corpus/normalized",
+        "scheme_count": 5
+      }
+    },
+    {
+      "step": "2.1_chunking",
+      "ok": true,
+      "detail": {
+        "chunks_root": "/Users/mahimatiwari/Desktop/ms_02/phases/index/chunks",
+        "total_chunks": 119,
+        "results": [
+          {
+            "scheme_id": "hdfc_mid_cap_direct_growth",
+            "ok": true,
+            "chunk_count": 25,
+            "error": null
+          },
+          {
+            "scheme_id": "hdfc_equity_direct_growth",
+            "ok": true,
+            "chunk_count": 25,
+            "error": null
+          },
+          {
+            "scheme_id": "hdfc_focused_direct_growth",
+            "ok": true,
+            "chunk_count": 23,
+            "error": null
+          },
+          {
+            "scheme_id": "hdfc_elss_tax_saver_direct_growth",
+            "ok": true,
+            "chunk_count": 23,
+            "error": null
+          },
+          {
+            "scheme_id": "hdfc_large_cap_direct_growth",
+            "ok": true,
+            "chunk_count": 23,
+            "error": null
+          }
+        ]
+      }
+    },
+    {
+      "step": "2.1_chunk_metadata",
+      "ok": true,
+      "detail": {
+        "total_chunks": 119,
+        "scheme_files": 5,
+        "errors": [],
+        "error_count": 0
+      }
+    },
+    {
+      "step": "2.2_embeddings",
+      "ok": true,
+      "detail": {
+        "embeddings_root": "/Users/mahimatiwari/Desktop/ms_02/phases/index/embeddings",
+        "total_embedded": 98,
+        "total_skipped": 21,
+        "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2"
+      }
+    },
+    {
+      "step": "2.3_vector_store",
+      "ok": true,
+      "detail": {
+        "vector_store_root": "/Users/mahimatiwari/Desktop/ms_02/phases/index/vector_store",
+        "total_vectors": 98,
+        "backend": "chromadb",
+        "collection_name": "ms02_chunks"
+      }
+    },
+    {
+      "step": "2.4_golden_eval",
+      "ok": true,
+      "detail": {
+        "hybrid_top1_accuracy": 1.0,
+        "vector_top1_accuracy": 1.0,
+        "hybrid_mean_reciprocal_rank": 1.0,
+        "queries_passing": 7,
+        "total_queries": 7
+      }
+    },
+    {
+      "step": "2.4_smoke_hits",
+      "ok": true,
+      "detail": {
+        "ok": true,
+        "failures": []
+      }
+    },
+    {
+      "step": "2.5_exit",
+      "ok": true,
+      "detail": {
+        "golden_ok": true,
+        "smoke_ok": true,
+        "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2"
+      }
+    }
+  ]
+}

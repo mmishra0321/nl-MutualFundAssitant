@@ -1,0 +1,44 @@
+{
+  "ok": true,
+  "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_dimensions": 384,
+  "embedded_at": "2026-05-17T08:43:20Z",
+  "chunks_root": "/Users/mahimatiwari/Desktop/ms_02/phases/index/chunks",
+  "embeddings_root": "/Users/mahimatiwari/Desktop/ms_02/phases/index/embeddings",
+  "chunks_corpus_fingerprint": "9a5aed7c1e1ac38d108a16de15ba579d3a866ead654b020382e335faa920bcea",
+  "total_embedded": 98,
+  "total_skipped": 21,
+  "schemes": [
+    {
+      "scheme_id": "hdfc_elss_tax_saver_direct_growth",
+      "embedded_count": 18,
+      "skipped_count": 5,
+      "embeddings_file": "hdfc_elss_tax_saver_direct_growth.jsonl"
+    },
+    {
+      "scheme_id": "hdfc_equity_direct_growth",
+      "embedded_count": 20,
+      "skipped_count": 5,
+      "embeddings_file": "hdfc_equity_direct_growth.jsonl"
+    },
+    {
+      "scheme_id": "hdfc_focused_direct_growth",
+      "embedded_count": 20,
+      "skipped_count": 3,
+      "embeddings_file": "hdfc_focused_direct_growth.jsonl"
+    },
+    {
+      "scheme_id": "hdfc_large_cap_direct_growth",
+      "embedded_count": 20,
+      "skipped_count": 3,
+      "embeddings_file": "hdfc_large_cap_direct_growth.jsonl"
+    },
+    {
+      "scheme_id": "hdfc_mid_cap_direct_growth",
+      "embedded_count": 20,
+      "skipped_count": 5,
+      "embeddings_file": "hdfc_mid_cap_direct_growth.jsonl"
+    }
+  ],
+  "error": null
+}

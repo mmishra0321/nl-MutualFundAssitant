@@ -1,0 +1,7 @@
+# Phase 4 API — install deps from repo root perspective:
+#   pip install -r phases/ui/backend/requirements.txt
+fastapi>=0.115,<1
+uvicorn[standard]>=0.32,<1
+-r ../../index/requirements.txt
+-r ../../answer_engine/requirements.txt
+-r ../../corpus/requirements.txt

@@ -1,0 +1,5 @@
+# Phase 4 Streamlit UI — or install from repo root requirements.txt
+-r ../corpus/requirements.txt
+-r ../index/requirements.txt
+-r ../answer_engine/requirements.txt
+streamlit>=1.32,<2

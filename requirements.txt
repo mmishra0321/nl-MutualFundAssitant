@@ -1,0 +1,5 @@
+# MS02 — Streamlit deploy + RAG stack (repo root for Streamlit Cloud)
+-r phases/corpus/requirements.txt
+-r phases/index/requirements.txt
+-r phases/answer_engine/requirements.txt
+streamlit>=1.32,<2
