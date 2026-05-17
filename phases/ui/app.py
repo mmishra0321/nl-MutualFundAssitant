@@ -54,40 +54,57 @@ SUPPORTED_FUNDS = (
     "HDFC Large Cap Fund Direct Growth",
 )
 
-# Follow-up suggestions keyed by scheme theme (shown after each answer).
-FOLLOW_UPS: dict[str, tuple[str, ...]] = {
+# Large rotating pools — always show 3 fresh follow-ups (not a shrinking filter list).
+FUND_QUESTIONS: dict[str, tuple[str, ...]] = {
     "mid_cap": (
+        "What is the latest NAV for HDFC Mid Cap Fund Direct Growth?",
         "What is the expense ratio for HDFC Mid Cap Fund Direct Growth?",
         "What is the minimum SIP for HDFC Mid Cap Fund Direct Growth?",
         "What is the benchmark for HDFC Mid Cap Fund Direct Growth?",
+        "What are the exit load details for HDFC Mid Cap Fund Direct Growth?",
+        "What is the riskometer for HDFC Mid Cap Fund Direct Growth?",
+        "What is the minimum lumpsum for HDFC Mid Cap Fund Direct Growth?",
     ),
     "equity": (
-        "What are the exit load details for HDFC Equity Fund Direct Growth?",
+        "What is the latest NAV for HDFC Equity Fund Direct Growth?",
         "What is the expense ratio for HDFC Equity Fund Direct Growth?",
+        "What are the exit load details for HDFC Equity Fund Direct Growth?",
         "What is the minimum SIP for HDFC Equity Fund Direct Growth?",
+        "What is the benchmark for HDFC Equity Fund Direct Growth?",
+        "What is the riskometer for HDFC Equity Fund Direct Growth?",
+        "What is the minimum lumpsum for HDFC Equity Fund Direct Growth?",
     ),
     "focused": (
-        "What is the expense ratio for HDFC Focused Fund Direct Growth?",
         "What is the latest NAV for HDFC Focused Fund Direct Growth?",
+        "What is the expense ratio for HDFC Focused Fund Direct Growth?",
         "What is the minimum SIP for HDFC Focused Fund Direct Growth?",
+        "What is the benchmark for HDFC Focused Fund Direct Growth?",
+        "What are the exit load details for HDFC Focused Fund Direct Growth?",
+        "What is the riskometer for HDFC Focused Fund Direct Growth?",
+        "What is the minimum lumpsum for HDFC Focused Fund Direct Growth?",
     ),
     "elss": (
+        "What is the latest NAV for HDFC ELSS Tax Saver Direct Plan Growth?",
         "What is the lock-in period for HDFC ELSS Tax Saver Direct Plan Growth?",
         "What is the expense ratio for HDFC ELSS Tax Saver Direct Plan Growth?",
         "What is the minimum SIP for HDFC ELSS Tax Saver Direct Plan Growth?",
+        "What is the benchmark for HDFC ELSS Tax Saver Direct Plan Growth?",
+        "What are the exit load details for HDFC ELSS Tax Saver Direct Plan Growth?",
+        "What is the riskometer for HDFC ELSS Tax Saver Direct Plan Growth?",
     ),
     "large_cap": (
         "What is the latest NAV for HDFC Large Cap Fund Direct Growth?",
         "What is the expense ratio for HDFC Large Cap Fund Direct Growth?",
         "What is the minimum SIP for HDFC Large Cap Fund Direct Growth?",
+        "What is the benchmark for HDFC Large Cap Fund Direct Growth?",
+        "What are the exit load details for HDFC Large Cap Fund Direct Growth?",
+        "What is the riskometer for HDFC Large Cap Fund Direct Growth?",
+        "What is the minimum lumpsum for HDFC Large Cap Fund Direct Growth?",
     ),
 }
 
-GENERIC_FOLLOW_UPS = (
-    "What is the latest NAV for HDFC Mid Cap Fund Direct Growth?",
-    "What are the exit load details for HDFC Equity Fund Direct Growth?",
-    "What is the minimum SIP for HDFC ELSS Tax Saver Direct Plan Growth?",
-)
+FOLLOW_UP_COUNT = 3
+THEME_ORDER = ("mid_cap", "equity", "focused", "elss", "large_cap")
 
 
 def _inject_styles() -> None:
@@ -165,6 +182,8 @@ def _init_session() -> None:
         st.session_state.chats = {
             st.session_state.active_chat_id: {"title": "Chat 1", "messages": []}
         }
+    if "follow_up_turn" not in st.session_state:
+        st.session_state.follow_up_turn = 0
 
 
 def _active_messages() -> list[dict]:
@@ -172,12 +191,40 @@ def _active_messages() -> list[dict]:
     return st.session_state.chats[cid]["messages"]
 
 
-def _asked_questions(messages: list[dict]) -> set[str]:
-    return {
-        m["content"].strip().lower()
-        for m in messages
-        if m.get("role") == "user" and m.get("content")
-    }
+def _last_user_question(messages: list[dict]) -> str:
+    for m in reversed(messages):
+        if m.get("role") == "user" and m.get("content"):
+            return m["content"].strip().lower()
+    return ""
+
+
+def _conversation_context(messages: list[dict]) -> str:
+    for m in reversed(messages):
+        if m.get("role") == "user" and m.get("content"):
+            return m["content"]
+        if m.get("role") == "assistant" and m.get("result") is not None:
+            return m["result"].answer
+    return ""
+
+
+def _suggestion_pool(theme: str | None) -> list[str]:
+    """Same-fund questions first, then other funds — large list for rotation."""
+    pool: list[str] = []
+    seen: set[str] = set()
+
+    def _add(items: tuple[str, ...]) -> None:
+        for q in items:
+            key = q.strip().lower()
+            if key not in seen:
+                seen.add(key)
+                pool.append(q)
+
+    if theme and theme in FUND_QUESTIONS:
+        _add(FUND_QUESTIONS[theme])
+    for t in THEME_ORDER:
+        if t != theme:
+            _add(FUND_QUESTIONS[t])
+    return pool
 
 
 def _detect_scheme_theme(text: str) -> str | None:
@@ -196,38 +243,43 @@ def _detect_scheme_theme(text: str) -> str | None:
 
 
 def _follow_up_suggestions(messages: list[dict]) -> list[str]:
-    """Return up to 3 follow-up questions not already asked in this chat."""
-    asked = _asked_questions(messages)
-    context = ""
-    for m in reversed(messages):
-        if m.get("role") == "user" and m.get("content"):
-            context = m["content"]
-            break
-        if m.get("role") == "assistant" and m.get("result") is not None:
-            context = m["result"].answer
-            break
+    """Return 3 follow-ups, rotating to new questions each turn (not a shrinking list)."""
+    if not messages:
+        return []
 
-    theme = _detect_scheme_theme(context)
-    pool: tuple[str, ...] = FOLLOW_UPS.get(theme, ()) + GENERIC_FOLLOW_UPS
+    theme = _detect_scheme_theme(_conversation_context(messages))
+    pool = _suggestion_pool(theme)
+    if not pool:
+        return []
+
+    last_q = _last_user_question(messages)
+    turn = int(st.session_state.get("follow_up_turn", 0))
+    start = (turn * FOLLOW_UP_COUNT) % len(pool)
 
     out: list[str] = []
-    for q in pool:
-        if q.strip().lower() not in asked and q not in out:
-            out.append(q)
-        if len(out) >= 3:
-            break
+    scanned = 0
+    while len(out) < FOLLOW_UP_COUNT and scanned < len(pool) * 2:
+        q = pool[(start + scanned) % len(pool)]
+        scanned += 1
+        if q.strip().lower() == last_q:
+            continue
+        if q in out:
+            continue
+        out.append(q)
     return out
 
 
 def _clear_active_chat() -> None:
     cid = st.session_state.active_chat_id
     st.session_state.chats[cid]["messages"] = []
+    st.session_state.follow_up_turn = 0
 
 
 def _clear_all_chats() -> None:
     cid = str(uuid.uuid4())
     st.session_state.chats = {cid: {"title": "Chat 1", "messages": []}}
     st.session_state.active_chat_id = cid
+    st.session_state.follow_up_turn = 0
 
 
 def _render_follow_ups(messages: list[dict]) -> None:
@@ -239,7 +291,12 @@ def _render_follow_ups(messages: list[dict]) -> None:
     for i, question in enumerate(suggestions):
         col = col_a if i % 2 == 0 else col_b
         label = question if len(question) <= 58 else question[:55] + "…"
-        if col.button(label, key=f"follow_{i}", use_container_width=True, help=question):
+        if col.button(
+            label,
+            key=f"follow_{st.session_state.follow_up_turn}_{i}",
+            use_container_width=True,
+            help=question,
+        ):
             with st.spinner("Retrieving facts…"):
                 _ask(question)
             st.rerun()
@@ -279,6 +336,7 @@ def _ask(question: str) -> None:
         )
         return
     messages.append({"role": "assistant", "result": result})
+    st.session_state.follow_up_turn = int(st.session_state.get("follow_up_turn", 0)) + 1
 
 
 def main() -> None:
@@ -303,6 +361,7 @@ def main() -> None:
             n = len(st.session_state.chats) + 1
             st.session_state.chats[cid] = {"title": f"Chat {n}", "messages": []}
             st.session_state.active_chat_id = cid
+            st.session_state.follow_up_turn = 0
             st.rerun()
         btn_col1, btn_col2 = st.columns(2, gap="small")
         with btn_col1:
