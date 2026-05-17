@@ -267,7 +267,7 @@ def build_vector_store(
         "ok": collection.count() == len(rows),
         "backend": BACKEND,
         "collection_name": COLLECTION_NAME,
-        "persist_path": str(chroma_dir.resolve()),
+        "persist_path": "chroma",
         "embeddings_root": str(emb_r.resolve()),
         "allowlist_path": str(allowlist.resolve()),
         "embedding_model_id": emb_manifest.get("embedding_model_id"),

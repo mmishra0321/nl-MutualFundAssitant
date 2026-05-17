@@ -158,7 +158,17 @@ class Retriever:
         self.embedding_model_id = model_id or manifest.get(
             "embedding_model_id", DEFAULT_MODEL_ID
         )
-        chroma_dir = Path(manifest["persist_path"])
+        # Always open Chroma under vector_store_root (portable on Streamlit Cloud).
+        chroma_dir = self.vector_store_root / "chroma"
+        if not chroma_dir.is_dir():
+            legacy = Path(str(manifest.get("persist_path", "")))
+            if legacy.is_dir():
+                chroma_dir = legacy
+            else:
+                raise RetrievalError(
+                    f"Chroma directory missing: {chroma_dir} "
+                    f"(legacy persist_path not found: {manifest.get('persist_path')})"
+                )
         client = get_persistent_client(chroma_dir)
         self.collection = get_collection(
             client, name=manifest.get("collection_name", COLLECTION_NAME)

@@ -2,7 +2,7 @@
   "ok": true,
   "backend": "chromadb",
   "collection_name": "ms02_chunks",
-  "persist_path": "/Users/mahimatiwari/Desktop/ms_02/phases/index/vector_store/chroma",
+  "persist_path": "chroma",
   "embeddings_root": "/Users/mahimatiwari/Desktop/ms_02/phases/index/embeddings",
   "allowlist_path": "/Users/mahimatiwari/Desktop/ms_02/phases/foundations/allowlist.yaml",
   "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",

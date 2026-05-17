@@ -33,6 +33,13 @@ from ms02_answer.models import AnswerResult
 DISCLAIMER = "Facts-only. No investment advice."
 
 EXAMPLE_QUESTIONS = (
+    "Latest NAV for HDFC Mid Cap Fund Direct Growth?",
+    "Expense ratio for HDFC Mid Cap Fund Direct Growth?",
+    "Exit load for HDFC Equity Fund Direct Growth?",
+    "Minimum SIP for HDFC ELSS Tax Saver Direct Plan Growth?",
+)
+
+EXAMPLE_FULL = (
     "What is the latest NAV for HDFC Mid Cap Fund Direct Growth?",
     "What is the expense ratio for HDFC Mid Cap Fund Direct Growth?",
     "What are the exit load details for HDFC Equity Fund Direct Growth?",
@@ -46,6 +53,33 @@ SUPPORTED_FUNDS = (
     "HDFC ELSS Tax Saver Direct Plan Growth",
     "HDFC Large Cap Fund Direct Growth",
 )
+
+
+def _inject_styles() -> None:
+    st.markdown(
+        """
+        <style>
+          .block-container { max-width: 52rem; padding-top: 1.25rem; }
+          [data-testid="stSidebar"] { min-width: 17rem; }
+          div[data-testid="stVerticalBlock"] div.stButton > button {
+            white-space: normal;
+            height: auto;
+            min-height: 2.75rem;
+            line-height: 1.35;
+            text-align: left;
+            padding: 0.55rem 0.75rem;
+          }
+          .disclaimer-box {
+            font-size: 0.85rem;
+            padding: 0.5rem 0.65rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(94, 236, 200, 0.35);
+            background: rgba(94, 236, 200, 0.08);
+          }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def _apply_streamlit_secrets() -> None:
@@ -63,13 +97,30 @@ def _apply_streamlit_secrets() -> None:
 
 def _configure_runtime() -> None:
     index_dir = _PHASES / "index"
-    os.environ.setdefault("HF_HOME", str(index_dir / ".cache" / "huggingface"))
+    cache = index_dir / ".cache" / "huggingface"
+    cache.mkdir(parents=True, exist_ok=True)
+    for var in ("HF_HOME", "SENTENCE_TRANSFORMERS_HOME", "TRANSFORMERS_CACHE"):
+        os.environ.setdefault(var, str(cache))
+
+
+def _index_ready() -> tuple[bool, str]:
+    manifest = _PHASES / "index" / "index_build.json"
+    chroma = _PHASES / "index" / "vector_store" / "chroma"
+    if not manifest.is_file():
+        return False, "Missing `phases/index/index_build.json` — run index build before deploy."
+    if not chroma.is_dir():
+        return False, "Missing `phases/index/vector_store/chroma` — commit the vector store to git."
+    return True, ""
 
 
 @st.cache_resource(show_spinner="Loading answer engine…")
 def _load_engine() -> AnswerEngine:
     _configure_runtime()
-    return AnswerEngine()
+    return AnswerEngine(
+        vector_store_root=_PHASES / "index" / "vector_store",
+        normalized_root=_PHASES / "corpus" / "normalized",
+        allowlist_path=_PHASES / "foundations" / "allowlist.yaml",
+    )
 
 
 def _init_session() -> None:
@@ -99,6 +150,12 @@ def _ask(question: str) -> None:
     question = question.strip()
     if not question:
         return
+    ready, err = _index_ready()
+    if not ready:
+        _active_messages().append(
+            {"role": "assistant", "result": None, "error": err}
+        )
+        return
     messages = _active_messages()
     messages.append({"role": "user", "content": question})
     try:
@@ -109,10 +166,7 @@ def _ask(question: str) -> None:
             {
                 "role": "assistant",
                 "result": None,
-                "error": (
-                    "The answer engine is unavailable. Ensure the Phase 2 index is built "
-                    f"(`phases/index/index_build.json`). ({exc})"
-                ),
+                "error": f"Could not answer right now: {exc}",
             }
         )
         return
@@ -127,9 +181,10 @@ def main() -> None:
     st.set_page_config(
         page_title="groww-factor — HDFC facts",
         page_icon="📊",
-        layout="wide",
+        layout="centered",
         initial_sidebar_state="expanded",
     )
+    _inject_styles()
 
     with st.sidebar:
         st.title("groww-factor")
@@ -145,21 +200,26 @@ def main() -> None:
         for fund in SUPPORTED_FUNDS:
             st.markdown(f"- {fund}")
         st.divider()
-        st.warning(DISCLAIMER)
+        st.markdown(f'<p class="disclaimer-box">{DISCLAIMER}</p>', unsafe_allow_html=True)
 
-    st.header("How can I help you today?")
-    st.caption(
-        "Strict, compliance-oriented answers from the five allowlisted Groww scheme pages."
-    )
+    messages = _active_messages()
+    has_chat = len(messages) > 0
 
-    cols = st.columns(2)
-    for i, q in enumerate(EXAMPLE_QUESTIONS):
-        if cols[i % 2].button(q, key=f"ex_{i}", use_container_width=True):
-            with st.spinner("Retrieving facts…"):
-                _ask(q)
-            st.rerun()
+    if not has_chat:
+        st.header("How can I help you today?")
+        st.caption(
+            "Compliance-oriented answers from five allowlisted Groww scheme pages."
+        )
+        st.markdown("**Try an example**")
+        col_a, col_b = st.columns(2, gap="small")
+        for i, (short, full) in enumerate(zip(EXAMPLE_QUESTIONS, EXAMPLE_FULL)):
+            col = col_a if i % 2 == 0 else col_b
+            if col.button(short, key=f"ex_{i}", use_container_width=True):
+                with st.spinner("Retrieving facts…"):
+                    _ask(full)
+                st.rerun()
 
-    for entry in _active_messages():
+    for entry in messages:
         if entry["role"] == "user":
             with st.chat_message("user"):
                 st.markdown(entry["content"])
@@ -169,8 +229,7 @@ def main() -> None:
         else:
             _render_message(entry["result"])
 
-    prompt = st.chat_input("Ask a factual question about HDFC schemes…")
-    if prompt:
+    if prompt := st.chat_input("Ask a factual question about HDFC schemes…"):
         with st.spinner("Retrieving facts…"):
             _ask(prompt)
         st.rerun()
