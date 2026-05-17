@@ -175,20 +175,98 @@ def _load_engine() -> AnswerEngine:
     )
 
 
+def _new_chat_record(*, title: str) -> dict:
+    return {"title": title, "messages": [], "follow_up_turn": 0}
+
+
 def _init_session() -> None:
     if "active_chat_id" not in st.session_state:
         st.session_state.active_chat_id = str(uuid.uuid4())
     if "chats" not in st.session_state:
         st.session_state.chats = {
-            st.session_state.active_chat_id: {"title": "Chat 1", "messages": []}
+            st.session_state.active_chat_id: _new_chat_record(title="Chat 1"),
         }
-    if "follow_up_turn" not in st.session_state:
-        st.session_state.follow_up_turn = 0
+    if "chat_order" not in st.session_state:
+        st.session_state.chat_order = list(st.session_state.chats.keys())
+    for chat in st.session_state.chats.values():
+        chat.setdefault("follow_up_turn", 0)
+        chat.setdefault("messages", [])
+
+
+def _active_chat() -> dict:
+    return st.session_state.chats[st.session_state.active_chat_id]
 
 
 def _active_messages() -> list[dict]:
-    cid = st.session_state.active_chat_id
-    return st.session_state.chats[cid]["messages"]
+    return _active_chat()["messages"]
+
+
+def _truncate_title(text: str, max_len: int = 36) -> str:
+    t = " ".join(text.split())
+    if len(t) <= max_len:
+        return t
+    return t[: max_len - 1] + "…"
+
+
+def _maybe_rename_chat(question: str) -> None:
+    chat = _active_chat()
+    title = chat.get("title", "")
+    if not title.startswith("Chat "):
+        return
+    user_msgs = [m for m in chat["messages"] if m.get("role") == "user"]
+    if len(user_msgs) == 1:
+        chat["title"] = _truncate_title(question)
+
+
+def _chat_preview(chat: dict) -> str:
+    for m in reversed(chat.get("messages", [])):
+        if m.get("role") == "user" and m.get("content"):
+            return _truncate_title(m["content"], 42)
+        if m.get("role") == "assistant":
+            if m.get("error"):
+                return _truncate_title(m["error"], 42)
+            if m.get("result") is not None:
+                return _truncate_title(m["result"].answer, 42)
+    return "No messages yet"
+
+
+def _switch_chat(chat_id: str) -> None:
+    if chat_id == st.session_state.active_chat_id:
+        return
+    if chat_id not in st.session_state.chats:
+        return
+    st.session_state.active_chat_id = chat_id
+
+
+def _render_chat_history() -> None:
+    st.markdown("**History**")
+    order = [
+        cid for cid in st.session_state.chat_order if cid in st.session_state.chats
+    ]
+    if not order:
+        st.caption("No chats yet.")
+        return
+
+    active_id = st.session_state.active_chat_id
+    for cid in order:
+        chat = st.session_state.chats[cid]
+        preview = _chat_preview(chat)
+        label = chat.get("title", "Chat")
+        is_active = cid == active_id
+        if st.button(
+            label,
+            key=f"hist_{cid}",
+            use_container_width=True,
+            type="primary" if is_active else "secondary",
+            help=preview,
+        ):
+            if cid != active_id:
+                _switch_chat(cid)
+                st.rerun()
+        if preview and preview != "No messages yet" and not is_active:
+            st.caption(preview)
+        elif preview and preview != "No messages yet" and is_active:
+            st.caption(f"▸ {preview}")
 
 
 def _last_user_question(messages: list[dict]) -> str:
@@ -253,7 +331,7 @@ def _follow_up_suggestions(messages: list[dict]) -> list[str]:
         return []
 
     last_q = _last_user_question(messages)
-    turn = int(st.session_state.get("follow_up_turn", 0))
+    turn = int(_active_chat().get("follow_up_turn", 0))
     start = (turn * FOLLOW_UP_COUNT) % len(pool)
 
     out: list[str] = []
@@ -270,16 +348,16 @@ def _follow_up_suggestions(messages: list[dict]) -> list[str]:
 
 
 def _clear_active_chat() -> None:
-    cid = st.session_state.active_chat_id
-    st.session_state.chats[cid]["messages"] = []
-    st.session_state.follow_up_turn = 0
+    chat = _active_chat()
+    chat["messages"] = []
+    chat["follow_up_turn"] = 0
 
 
 def _clear_all_chats() -> None:
     cid = str(uuid.uuid4())
-    st.session_state.chats = {cid: {"title": "Chat 1", "messages": []}}
+    st.session_state.chats = {cid: _new_chat_record(title="Chat 1")}
     st.session_state.active_chat_id = cid
-    st.session_state.follow_up_turn = 0
+    st.session_state.chat_order = [cid]
 
 
 def _render_follow_ups(messages: list[dict]) -> None:
@@ -293,7 +371,7 @@ def _render_follow_ups(messages: list[dict]) -> None:
         label = question if len(question) <= 58 else question[:55] + "…"
         if col.button(
             label,
-            key=f"follow_{st.session_state.follow_up_turn}_{i}",
+            key=f"follow_{st.session_state.active_chat_id}_{_active_chat().get('follow_up_turn', 0)}_{i}",
             use_container_width=True,
             help=question,
         ):
@@ -323,6 +401,7 @@ def _ask(question: str) -> None:
         return
     messages = _active_messages()
     messages.append({"role": "user", "content": question})
+    _maybe_rename_chat(question)
     try:
         engine = _load_engine()
         result = engine.ask(question)
@@ -336,7 +415,7 @@ def _ask(question: str) -> None:
         )
         return
     messages.append({"role": "assistant", "result": result})
-    st.session_state.follow_up_turn = int(st.session_state.get("follow_up_turn", 0)) + 1
+    _active_chat()["follow_up_turn"] = int(_active_chat().get("follow_up_turn", 0)) + 1
 
 
 def main() -> None:
@@ -359,10 +438,12 @@ def main() -> None:
         if st.button("+ New chat", use_container_width=True, type="primary"):
             cid = str(uuid.uuid4())
             n = len(st.session_state.chats) + 1
-            st.session_state.chats[cid] = {"title": f"Chat {n}", "messages": []}
+            st.session_state.chats[cid] = _new_chat_record(title=f"Chat {n}")
+            st.session_state.chat_order.insert(0, cid)
             st.session_state.active_chat_id = cid
-            st.session_state.follow_up_turn = 0
             st.rerun()
+        _render_chat_history()
+        st.divider()
         btn_col1, btn_col2 = st.columns(2, gap="small")
         with btn_col1:
             if st.button("Clear chat", use_container_width=True):
@@ -380,6 +461,9 @@ def main() -> None:
 
     messages = _active_messages()
     has_chat = len(messages) > 0
+    active_title = _active_chat().get("title", "Chat")
+    if has_chat:
+        st.caption(active_title)
 
     if not has_chat:
         st.header("How can I help you today?")
