@@ -63,7 +63,7 @@ class TestRetrieverMocked(unittest.TestCase):
 
         mock_manifest.return_value = {
             "ok": True,
-            "persist_path": "/tmp/chroma",
+            "persist_path": "chroma",
             "collection_name": "ms02_chunks",
             "embedding_model_id": "test-model",
         }
@@ -116,6 +116,7 @@ class TestRetrieverMocked(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tmp:
             vs = Path(tmp)
+            (vs / "chroma").mkdir()
             (vs / "manifest.json").write_text("{}", encoding="utf-8")
             retriever = Retriever(
                 vector_store_root=vs, allowlist_path=allowlist, model_id="test"
